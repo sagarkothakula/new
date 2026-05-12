@@ -1,173 +1,1255 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Upload Tool</title>
+<title>FreelanceOS — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-body { font-family: Arial; background:#f5f5f5; padding:20px; }
-.container { max-width:900px; margin:auto; background:#fff; padding:20px; border-radius:10px; }
-input, button { padding:10px; margin:5px 0; width:100%; }
-.preview { margin-top:20px; border-top:1px solid #ddd; padding-top:20px; }
-.card { border:1px solid #ddd; padding:15px; margin-top:10px; border-radius:10px; display:flex; gap:15px; }
-.card img { width:120px; height:120px; object-fit:cover; border-radius:10px; }
-.export-btn { background:#28a745; color:#fff; border:none; cursor:pointer; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --bg4: #1e1e28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f5;
+    --muted: #888896;
+    --muted2: #55556a;
+    --accent: #7c6af7;
+    --accent2: #a594ff;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --pink: #ec4899;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --r: 10px;
+    --r2: 14px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* LOGIN */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    position: relative;
+  }
+  #login-screen::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,106,247,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #login-screen::after {
+    content: '';
+    position: fixed;
+    bottom: -150px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .login-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 48px 44px;
+    width: 420px;
+    position: relative;
+    z-index: 1;
+  }
+  .login-logo {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    letter-spacing: -0.5px;
+  }
+  .login-logo span { color: var(--accent2); }
+  .login-card h2 {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .login-card p { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+  .role-select {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .role-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .role-btn .role-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+  .role-btn:hover { border-color: var(--border2); color: var(--text); }
+  .role-btn.active { border-color: var(--accent); background: rgba(124,106,247,0.12); color: var(--accent2); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .form-group input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: var(--accent); }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--r);
+    padding: 13px;
+    color: #fff;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:active { transform: scale(0.99); }
+
+  .creds-hint {
+    margin-top: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .creds-hint strong { color: var(--text); }
+
+  /* APP SHELL */
+  #app { display: none; min-height: 100vh; }
+
+  .app-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 230px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo span { color: var(--accent2); }
+  .sidebar-role-badge {
+    margin: 16px 20px 12px;
+    background: rgba(124,106,247,0.12);
+    border: 1px solid rgba(124,106,247,0.25);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .sidebar-nav { flex: 1; padding: 4px 12px; overflow-y: auto; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--muted);
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    text-decoration: none;
+  }
+  .nav-item .nav-icon { font-size: 16px; width: 18px; text-align: center; }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(124,106,247,0.12); color: var(--accent2); font-weight: 500; }
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 10px 6px;
+  }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+  }
+  .logout-btn:hover { color: var(--red); }
+
+  /* MAIN */
+  .main-content {
+    margin-left: 230px;
+    flex: 1;
+    padding: 32px 36px;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+  .page-header h1 {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .page-header p { font-size: 14px; color: var(--muted); }
+
+  /* STAT CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--border2); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 0 var(--r2) 0 80px;
+    opacity: 0.07;
+  }
+  .stat-card.green::before { background: var(--green); }
+  .stat-card.amber::before { background: var(--amber); }
+  .stat-card.blue::before { background: var(--blue); }
+  .stat-card.red::before { background: var(--red); }
+  .stat-card.purple::before { background: var(--accent); }
+
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-family: var(--font-head); font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.amber { color: var(--amber); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.purple { color: var(--accent2); }
+  .stat-sub { font-size: 12px; color: var(--muted); }
+
+  /* SECTION */
+  .section { margin-bottom: 28px; }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-head h2 {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg3); }
+  th {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+  }
+  td {
+    padding: 13px 16px;
+    font-size: 13.5px;
+    border-top: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: var(--bg3); }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .badge.green { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .badge.amber { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .badge.red { background: rgba(239,68,68,0.12); color: #f87171; }
+  .badge.blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .badge.purple { background: rgba(124,106,247,0.12); color: var(--accent2); }
+  .badge.gray { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+  .btn-accent { background: var(--accent); color: #fff; }
+  .btn-accent:hover { opacity: 0.85; }
+  .btn-ghost { background: transparent; border-color: var(--border2); color: var(--muted); }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* CARD */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 20px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 32px;
+    width: 560px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-family: var(--font-head); font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .modal-grid.single { grid-template-columns: 1fr; }
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    margin-top: -4px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-group label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field-group input, .field-group select, .field-group textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .field-group select option { background: var(--bg3); }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus { border-color: var(--accent); }
+  .field-group textarea { resize: vertical; min-height: 70px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* STAR RATING */
+  .stars { color: var(--amber); font-size: 14px; letter-spacing: 1px; }
+
+  /* CUSTOMER DETAIL */
+  .detail-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label { font-size: 12px; color: var(--muted); min-width: 110px; padding-top: 1px; }
+  .detail-value { font-size: 13.5px; flex: 1; }
+
+  /* PAYMENT */
+  .payment-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .payment-row:last-child { border-bottom: none; }
+
+  /* AVATAR */
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .av-purple { background: rgba(124,106,247,0.2); color: var(--accent2); }
+  .av-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .av-blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .av-pink { background: rgba(236,72,153,0.15); color: #f472b6; }
+
+  /* PROGRESS */
+  .progress-bar { background: var(--bg4); border-radius: 20px; height: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 20px; background: var(--accent); transition: width 0.5s ease; }
+  .progress-fill.green { background: var(--green); }
+  .progress-fill.amber { background: var(--amber); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* CREDS TABLE */
+  .cred-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1fr; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .cred-row:last-child { border-bottom: none; }
+  .cred-head { background: var(--bg3); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; border-radius: var(--r) var(--r) 0 0; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { border-left: 3px solid var(--green); }
+  #toast.error { border-left: 3px solid var(--red); }
+
+  /* TABS */
+  .tab-list { display: flex; gap: 4px; background: var(--bg3); padding: 4px; border-radius: 10px; margin-bottom: 20px; width: fit-content; }
+  .tab { padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.15s; border: none; background: none; font-family: var(--font-body); }
+  .tab.active { background: var(--bg2); color: var(--text); }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 14px; }
+  .empty .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+
+  /* CREDENTIALS SECTION */
+  .cred-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .main-content { margin-left: 0; padding: 20px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .modal-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<div class="container">
-<h2>Product Upload Tool</h2>
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Freelance<span>OS</span></div>
+    <h2>Welcome back</h2>
+    <p>Select your role and sign in to continue</p>
 
-<input type="file" id="image" accept="image/*">
-<input type="text" id="name" placeholder="Product Name">
-<input type="number" id="mrp" placeholder="MRP">
-<input type="number" id="discount" placeholder="Discount (%)">
+    <div class="role-select">
+      <div class="role-btn active" data-role="admin" onclick="selectRole('admin', this)">
+        <span class="role-icon">🛡️</span>Admin
+      </div>
+      <div class="role-btn" data-role="marketing" onclick="selectRole('marketing', this)">
+        <span class="role-icon">📊</span>Marketing
+      </div>
+      <div class="role-btn" data-role="developer" onclick="selectRole('developer', this)">
+        <span class="role-icon">💻</span>Developer
+      </div>
+    </div>
 
-<button onclick="addProduct()">Add Product</button>
-<button class="export-btn" onclick="exportToWord()">Export to Word</button>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Enter username" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Enter password" />
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign in →</button>
 
-<div class="preview" id="preview"></div>
+    <div class="creds-hint">
+      <strong>Demo credentials</strong><br>
+      Admin: <code>admin</code> / <code>admin123</code><br>
+      Marketing: <code>marketing</code> / <code>mkt123</code><br>
+      Developer: <code>developer</code> / <code>dev123</code>
+    </div>
+  </div>
 </div>
 
+<!-- APP -->
+<div id="app">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">Freelance<span>OS</span></div>
+      <div class="sidebar-role-badge" id="role-badge">Admin</div>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="doLogout()">⬅ Sign out</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content" id="main-content"></main>
+  </div>
+</div>
+
+<!-- MODAL: Add Customer -->
+<div class="modal-overlay" id="modal-add-customer">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-add-customer')">✕</button>
+    <h2>Add New Customer</h2>
+    <div class="modal-grid">
+      <div class="field-group">
+        <label>Company Name</label>
+        <input type="text" id="f-company" placeholder="e.g. Zylo Retail Pvt Ltd" />
+      </div>
+      <div class="field-group">
+        <label>Contact Number</label>
+        <input type="tel" id="f-phone" placeholder="+91 98765 43210" />
+      </div>
+      <div class="field-group" style="grid-column: span 2">
+        <label>Address</label>
+        <input type="text" id="f-address" placeholder="City, State" />
+      </div>
+      <div class="field-group">
+        <label>Business Type</label>
+        <select id="f-type">
+          <option value="">Select type</option>
+          <option>E-commerce</option>
+          <option>Salon</option>
+          <option>Hospital / Clinic</option>
+          <option>Real Estate</option>
+          <option>Restaurant</option>
+          <option>Education</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Rating (1–5)</label>
+        <select id="f-rating">
+          <option value="5">⭐⭐⭐⭐⭐ — Excellent</option>
+          <option value="4">⭐⭐⭐⭐ — Good</option>
+          <option value="3">⭐⭐⭐ — Average</option>
+          <option value="2">⭐⭐ — Below avg</option>
+          <option value="1">⭐ — Poor</option>
+        </select>
+      </div>
+      <div class="field-group" style="grid-column: span 2">
+        <label>Business Profile Link (Google / Instagram)</label>
+        <input type="url" id="f-profile" placeholder="https://g.page/..." />
+      </div>
+      <div class="field-group">
+        <label>Project Type</label>
+        <select id="f-project">
+          <option value="">Select...</option>
+          <option>Website Design</option>
+          <option>SEO</option>
+          <option>Google Ads</option>
+          <option>Meta Ads</option>
+          <option>Social Media</option>
+          <option>Full Package</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Budget (₹)</label>
+        <input type="number" id="f-budget" placeholder="e.g. 25000" />
+      </div>
+      <div class="field-group" style="grid-column: span 2">
+        <label>Special Notes / Customization Request</label>
+        <textarea id="f-notes" placeholder="Any specific requirements from customer..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-customer')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveCustomer()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: View Customer -->
+<div class="modal-overlay" id="modal-view-customer">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-view-customer')">✕</button>
+    <h2 id="view-company-name">Customer Details</h2>
+    <div id="view-customer-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-view-customer')">Close</button>
+      <button class="btn btn-accent" onclick="requestDemo()" id="demo-btn">📅 Request Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Payment -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-payment')">✕</button>
+    <h2>Payment Details</h2>
+    <div id="payment-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-payment')">Close</button>
+      <button class="btn btn-accent" onclick="markPaid()">Mark as Paid</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Credentials -->
+<div class="modal-overlay" id="modal-add-cred">
+  <div class="modal" style="width: 480px;">
+    <button class="modal-close" onclick="closeModal('modal-add-cred')">✕</button>
+    <h2>Add Credentials</h2>
+    <div class="modal-grid">
+      <div class="field-group">
+        <label>Name</label>
+        <input type="text" id="c-name" placeholder="Team member name" />
+      </div>
+      <div class="field-group">
+        <label>Role</label>
+        <select id="c-role">
+          <option>Marketing</option>
+          <option>Developer</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Username</label>
+        <input type="text" id="c-user" placeholder="login username" />
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="text" id="c-pass" placeholder="password" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-cred')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveCred()">Add Credential</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
 <script>
-let products = [];
+// ─── DATA STORE ───────────────────────────────────────────────────────────────
+const DB = {
+  customers: [
+    { id: 1, company: 'Glam Studio', phone: '+91 98001 11234', address: 'Indiranagar, Bengaluru', type: 'Salon', rating: 5, profile: 'https://g.page/glam', project: 'Social Media', budget: 18000, notes: 'Wants reels every week', status: 'Ongoing', progress: 65, payments: [{label:'Advance', amount:9000, paid:true},{label:'Final', amount:9000, paid:false}], demo: false },
+    { id: 2, company: 'MediCare Plus', phone: '+91 90002 22345', address: 'HSR Layout, Bengaluru', type: 'Hospital / Clinic', rating: 4, profile: 'https://g.page/medicare', project: 'Google Ads', budget: 35000, notes: 'Focus on ortho and ENT departments', status: 'Completed', progress: 100, payments: [{label:'Advance', amount:17500, paid:true},{label:'Final', amount:17500, paid:true}], demo: true },
+    { id: 3, company: 'PropNest Realty', phone: '+91 91003 33456', address: 'Whitefield, Bengaluru', type: 'Real Estate', rating: 4, profile: 'https://g.page/propnest', project: 'Meta Ads', budget: 50000, notes: 'Target luxury 3BHK buyers', status: 'Ongoing', progress: 40, payments: [{label:'Advance', amount:25000, paid:true},{label:'Milestone', amount:12500, paid:false},{label:'Final', amount:12500, paid:false}], demo: false },
+    { id: 4, company: 'TrendKart', phone: '+91 92004 44567', address: 'Koramangala, Bengaluru', type: 'E-commerce', rating: 5, profile: 'https://g.page/trendkart', project: 'Full Package', budget: 80000, notes: 'Website + SEO + Ads. Needs dashboard integration.', status: 'Ongoing', progress: 20, payments: [{label:'Advance', amount:32000, paid:true},{label:'Milestone 1', amount:24000, paid:false},{label:'Final', amount:24000, paid:false}], demo: false },
+    { id: 5, company: 'Bite & Brew', phone: '+91 93005 55678', address: 'Jayanagar, Bengaluru', type: 'Restaurant', rating: 3, profile: '', project: 'SEO', budget: 12000, notes: 'Local SEO, Zomato listing optimization', status: 'Completed', progress: 100, payments: [{label:'Full payment', amount:12000, paid:true}], demo: true },
+  ],
+  credentials: [
+    { id: 1, name: 'Sagar K', role: 'Marketing', username: 'marketing', password: 'mkt123' },
+    { id: 2, name: 'Rahul Dev', role: 'Developer', username: 'developer', password: 'dev123' },
+  ],
+  nextId: 6,
+  nextCredId: 3,
+};
 
-function addProduct() {
-    const imageInput = document.getElementById('image');
-    const name = document.getElementById('name').value;
-    const mrp = parseFloat(document.getElementById('mrp').value);
-    const discount = parseFloat(document.getElementById('discount').value);
+const ROLES = {
+  admin: { label: 'Admin', creds: { user: 'admin', pass: 'admin123' } },
+  marketing: { label: 'Digital Marketing', creds: { user: 'marketing', pass: 'mkt123' } },
+  developer: { label: 'Developer', creds: { user: 'developer', pass: 'dev123' } },
+};
 
-    if (!imageInput.files[0] || !name || !mrp || !discount) {
-        alert('Please fill all fields');
-        return;
+let currentRole = 'admin';
+let selectedRole = 'admin';
+let viewingCustomerId = null;
+
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
+function selectRole(role, el) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+
+  // Also check dynamic credentials
+  let matched = false;
+  for (const [roleKey, roleData] of Object.entries(ROLES)) {
+    if (roleKey === selectedRole && user === roleData.creds.user && pass === roleData.creds.pass) {
+      matched = true; break;
     }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const finalPrice = mrp - (mrp * discount / 100);
-
-        const product = {
-            image: e.target.result,
-            name,
-            mrp,
-            discount,
-            finalPrice: finalPrice.toFixed(2)
-        };
-
-        products.push(product);
-        renderProducts();
-    };
-
-    reader.readAsDataURL(imageInput.files[0]);
-}
-
-function renderProducts() {
-    const preview = document.getElementById('preview');
-    preview.innerHTML = '';
-
-    products.forEach(p => {
-        preview.innerHTML += `
-        <div class="card">
-            <img src="${p.image}" />
-            <div>
-                <h3>${p.name}</h3>
-                <p>MRP: ₹${p.mrp}</p>
-                <p>Discount: ${p.discount}%</p>
-                <h4>Final Price: ₹${p.finalPrice}</h4>
-            </div>
-        </div>`;
-    });
-}
-
-function exportToWord() {
-    if (products.length === 0) {
-        alert('No products to export');
-        return;
+  }
+  // Check dynamic creds too
+  if (!matched) {
+    const dynCred = DB.credentials.find(c => c.username === user && c.password === pass);
+    if (dynCred) {
+      const rk = dynCred.role === 'Marketing' ? 'marketing' : 'developer';
+      if (rk === selectedRole) matched = true;
     }
+  }
 
-    let content = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-          xmlns:w='urn:schemas-microsoft-com:office:word' 
-          xmlns='http://www.w3.org/TR/REC-html40'>
-    <head><meta charset='utf-8'><title>Products</title></head>
-    <body>
-    <h2>Product List</h2>`;
+  if (!matched) { showToast('Invalid credentials. Try again.', 'error'); return; }
 
-    products.forEach(p => {
-        content += `
-        <div style="margin-bottom:20px;">
-            <img src="${p.image}" width="120" /><br>
-            <strong>${p.name}</strong><br>
-            MRP: ₹${p.mrp}<br>
-            Discount: ${p.discount}%<br>
-            Final Price: ₹${p.finalPrice}<br>
-        </div>`;
-    });
-
-    content += `</body></html>`;
-
-    // FIX: Better download method
-    const blob = new Blob(['﻿', content], {
-        type: 'application/msword'
-    });
-
-    const fileName = 'products.doc';
-
-    // For modern browsers
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob, fileName);
-    } else {
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = fileName;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-
-        // IMPORTANT FIX
-        setTimeout(() => {
-            link.click();
-            document.body.removeChild(link);
-        }, 100);
-    }
+  currentRole = selectedRole;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  buildApp();
 }
 
-    let content = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-          xmlns:w='urn:schemas-microsoft-com:office:word' 
-          xmlns='http://www.w3.org/TR/REC-html40'>
-    <head><meta charset='utf-8'><title>Products</title></head>
-    <body>
-    <h2>Product List</h2>`;
-
-    products.forEach(p => {
-        content += `
-        <div style="margin-bottom:20px;">
-            <img src="${p.image}" width="120" /><br>
-            <strong>${p.name}</strong><br>
-            MRP: ₹${p.mrp}<br>
-            Discount: ${p.discount}%<br>
-            Final Price: ₹${p.finalPrice}<br>
-        </div>`;
-    });
-
-    content += `</body></html>`;
-
-    const blob = new Blob([content], {
-        type: 'application/vnd.ms-word;charset=utf-8;'
-    });
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'products.doc';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
 }
+
+// ─── APP BUILD ────────────────────────────────────────────────────────────────
+const navConfig = {
+  admin: [
+    { id: 'dashboard', icon: '⊞', label: 'Dashboard' },
+    { id: 'projects', icon: '📁', label: 'All Projects' },
+    { id: 'customers', icon: '🏢', label: 'Customers' },
+    { id: 'credentials', icon: '🔑', label: 'Credentials' },
+  ],
+  marketing: [
+    { id: 'dashboard', icon: '⊞', label: 'Dashboard' },
+    { id: 'add-customer', icon: '➕', label: 'Add Customer' },
+    { id: 'customers', icon: '🏢', label: 'My Customers' },
+    { id: 'payments', icon: '💰', label: 'Payments' },
+  ],
+  developer: [
+    { id: 'dashboard', icon: '⊞', label: 'Dashboard' },
+    { id: 'projects', icon: '📁', label: 'Projects' },
+    { id: 'completed', icon: '✅', label: 'Completed' },
+  ],
+};
+
+function buildApp() {
+  document.getElementById('role-badge').textContent = ROLES[currentRole].label;
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = navConfig[currentRole].map((item, i) =>
+    `<div class="nav-item ${i===0?'active':''}" data-page="${item.id}" onclick="navTo('${item.id}', this)">
+      <span class="nav-icon">${item.icon}</span> ${item.label}
+    </div>`
+  ).join('');
+  loadPage('dashboard');
+}
+
+function navTo(page, el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  loadPage(page);
+}
+
+// ─── PAGES ────────────────────────────────────────────────────────────────────
+function loadPage(page) {
+  const main = document.getElementById('main-content');
+  const pages = { admin: adminPages, marketing: marketingPages, developer: developerPages };
+  const fn = pages[currentRole][page];
+  if (fn) main.innerHTML = fn();
+}
+
+// ADMIN PAGES
+const adminPages = {
+  dashboard() {
+    const total = DB.customers.length;
+    const completed = DB.customers.filter(c => c.status === 'Completed').length;
+    const ongoing = DB.customers.filter(c => c.status === 'Ongoing').length;
+    const totalRev = DB.customers.reduce((s, c) => s + c.budget, 0);
+    const collected = DB.customers.reduce((s, c) => s + c.payments.filter(p => p.paid).reduce((a, p) => a + p.amount, 0), 0);
+    return `
+      <div class="page-header">
+        <h1>Admin Dashboard</h1>
+        <p>Overview of all freelance projects and clients</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-label">Total Projects</div>
+          <div class="stat-value purple">${total}</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value green">${completed}</div>
+          <div class="stat-sub">${Math.round(completed/total*100)}% success rate</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Ongoing</div>
+          <div class="stat-value amber">${ongoing}</div>
+          <div class="stat-sub">Active right now</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value blue" style="font-size:24px">₹${totalRev.toLocaleString()}</div>
+          <div class="stat-sub">₹${collected.toLocaleString()} collected</div>
+        </div>
+      </div>
+      ${adminPages.customers()}`;
+  },
+
+  customers() {
+    return `
+      <div class="section">
+        <div class="section-head">
+          <h2>All Customers</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Company</th><th>Type</th><th>Project</th><th>Status</th><th>Progress</th><th>Budget</th><th>Rating</th>
+            </tr></thead>
+            <tbody>
+              ${DB.customers.map(c => `
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px">
+                    <div class="avatar av-purple">${c.company[0]}</div>
+                    <div>
+                      <div style="font-weight:500">${c.company}</div>
+                      <div style="font-size:12px;color:var(--muted)">${c.phone}</div>
+                    </div>
+                  </div></td>
+                  <td><span class="badge gray">${c.type}</span></td>
+                  <td style="color:var(--muted);font-size:13px">${c.project}</td>
+                  <td>${statusBadge(c.status)}</td>
+                  <td style="min-width:100px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="progress-bar" style="flex:1"><div class="progress-fill ${c.progress===100?'green':c.progress>50?'':'amber'}" style="width:${c.progress}%"></div></div>
+                      <span style="font-size:12px;color:var(--muted)">${c.progress}%</span>
+                    </div>
+                  </td>
+                  <td style="font-size:13px;font-weight:500">₹${c.budget.toLocaleString()}</td>
+                  <td><span class="stars">${'★'.repeat(c.rating)}${'☆'.repeat(5-c.rating)}</span></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  },
+
+  projects() {
+    return `
+      <div class="page-header"><h1>All Projects</h1><p>Every project across all clients</p></div>
+      ${adminPages.customers()}`;
+  },
+
+  credentials() {
+    return `
+      <div class="page-header"><h1>Credentials</h1><p>Manage team login access</p></div>
+      <div class="section">
+        <div class="section-head">
+          <h2>Team Credentials</h2>
+          <button class="btn btn-accent btn-sm" onclick="openModal('modal-add-cred')">+ Add</button>
+        </div>
+        <div class="cred-card">
+          <div class="cred-row cred-head">
+            <span>Name</span><span>Username</span><span>Role</span><span>Password</span>
+          </div>
+          ${DB.credentials.map(c => `
+            <div class="cred-row">
+              <span style="font-weight:500">${c.name}</span>
+              <span style="color:var(--accent2);font-family:monospace">${c.username}</span>
+              <span>${roleBadge(c.role)}</span>
+              <span style="font-family:monospace;color:var(--muted)">${c.password}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  },
+};
+
+// MARKETING PAGES
+const marketingPages = {
+  dashboard() {
+    const my = DB.customers;
+    const pending = my.reduce((s,c) => s + c.payments.filter(p=>!p.paid).reduce((a,p)=>a+p.amount,0), 0);
+    const demos = my.filter(c=>!c.demo).length;
+    return `
+      <div class="page-header"><h1>Marketing Dashboard</h1><p>Your client pipeline at a glance</p></div>
+      <div class="stats-grid">
+        <div class="stat-card purple"><div class="stat-label">Total Clients</div><div class="stat-value purple">${my.length}</div></div>
+        <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value green">${my.filter(c=>c.status==='Completed').length}</div></div>
+        <div class="stat-card amber"><div class="stat-label">Pending Payment</div><div class="stat-value amber" style="font-size:22px">₹${pending.toLocaleString()}</div></div>
+        <div class="stat-card blue"><div class="stat-label">Demo Pending</div><div class="stat-value blue">${demos}</div></div>
+      </div>
+      ${marketingPages.customers()}`;
+  },
+
+  'add-customer'() {
+    return `
+      <div class="page-header"><h1>Add Customer</h1><p>Register a new client into the system</p></div>
+      <div class="card" style="max-width:640px">
+        <div class="modal-grid">
+          <div class="field-group"><label>Company Name</label><input type="text" id="f-company" placeholder="e.g. Zylo Retail Pvt Ltd" /></div>
+          <div class="field-group"><label>Contact Number</label><input type="tel" id="f-phone" placeholder="+91 98765 43210" /></div>
+          <div class="field-group" style="grid-column:span 2"><label>Address</label><input type="text" id="f-address" placeholder="City, State" /></div>
+          <div class="field-group"><label>Business Type</label><select id="f-type"><option value="">Select type</option><option>E-commerce</option><option>Salon</option><option>Hospital / Clinic</option><option>Real Estate</option><option>Restaurant</option><option>Education</option><option>Other</option></select></div>
+          <div class="field-group"><label>Rating (1–5)</label><select id="f-rating"><option value="5">⭐⭐⭐⭐⭐ Excellent</option><option value="4">⭐⭐⭐⭐ Good</option><option value="3">⭐⭐⭐ Average</option><option value="2">⭐⭐ Below avg</option><option value="1">⭐ Poor</option></select></div>
+          <div class="field-group" style="grid-column:span 2"><label>Business Profile Link</label><input type="url" id="f-profile" placeholder="https://g.page/..." /></div>
+          <div class="field-group"><label>Project Type</label><select id="f-project"><option value="">Select...</option><option>Website Design</option><option>SEO</option><option>Google Ads</option><option>Meta Ads</option><option>Social Media</option><option>Full Package</option></select></div>
+          <div class="field-group"><label>Budget (₹)</label><input type="number" id="f-budget" placeholder="e.g. 25000" /></div>
+          <div class="field-group" style="grid-column:span 2"><label>Notes / Customization</label><textarea id="f-notes" placeholder="Any specific requirements..."></textarea></div>
+        </div>
+        <div style="margin-top:20px"><button class="btn btn-accent" onclick="saveCustomerInline()">Save Customer →</button></div>
+      </div>`;
+  },
+
+  customers() {
+    return `
+      <div class="section">
+        <div class="section-head"><h2>Customer List</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company</th><th>Type</th><th>Project</th><th>Status</th><th>Rating</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${DB.customers.map(c => `
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px">
+                    <div class="avatar av-green">${c.company[0]}</div>
+                    <div><div style="font-weight:500">${c.company}</div><div style="font-size:12px;color:var(--muted)">${c.phone}</div></div>
+                  </div></td>
+                  <td><span class="badge gray">${c.type}</span></td>
+                  <td style="color:var(--muted);font-size:13px">${c.project}</td>
+                  <td>${statusBadge(c.status)}</td>
+                  <td><span class="stars">${'★'.repeat(c.rating)}</span></td>
+                  <td style="display:flex;gap:6px;flex-wrap:wrap">
+                    <button class="btn btn-ghost btn-sm" onclick="viewCustomer(${c.id})">👁 View</button>
+                    <button class="btn btn-ghost btn-sm" onclick="openPayment(${c.id})">💰 Pay</button>
+                    <button class="btn btn-accent btn-sm" onclick="quickDemo(${c.id})">${c.demo?'✅ Demo':'📅 Demo'}</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  },
+
+  payments() {
+    return `
+      <div class="page-header"><h1>Payment Overview</h1><p>Track all incoming payments</p></div>
+      <div class="section">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company</th><th>Milestone</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              ${DB.customers.flatMap(c => c.payments.map(p => `
+                <tr>
+                  <td style="font-weight:500">${c.company}</td>
+                  <td style="color:var(--muted)">${p.label}</td>
+                  <td style="font-weight:500">₹${p.amount.toLocaleString()}</td>
+                  <td>${p.paid ? '<span class="badge green">Received</span>' : '<span class="badge red">Pending</span>'}</td>
+                  <td>${!p.paid ? `<button class="btn btn-ghost btn-sm" onclick="openPayment(${c.id})">Mark Paid</button>` : '—'}</td>
+                </tr>`)).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  },
+};
+
+// DEVELOPER PAGES
+const developerPages = {
+  dashboard() {
+    const ongoing = DB.customers.filter(c=>c.status==='Ongoing');
+    const completed = DB.customers.filter(c=>c.status==='Completed');
+    return `
+      <div class="page-header"><h1>Developer Dashboard</h1><p>Your assigned projects and tasks</p></div>
+      <div class="stats-grid">
+        <div class="stat-card amber"><div class="stat-label">Ongoing</div><div class="stat-value amber">${ongoing.length}</div></div>
+        <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value green">${completed.length}</div></div>
+        <div class="stat-card purple"><div class="stat-label">Total Projects</div><div class="stat-value purple">${DB.customers.length}</div></div>
+      </div>
+      ${developerPages.projects()}`;
+  },
+
+  projects() {
+    const ongoing = DB.customers.filter(c=>c.status==='Ongoing');
+    return `
+      <div class="section">
+        <div class="section-head"><h2>Ongoing Projects</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company</th><th>Type</th><th>Project</th><th>Progress</th><th>Notes</th><th>Action</th></tr></thead>
+            <tbody>
+              ${ongoing.map(c => `
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px">
+                    <div class="avatar av-blue">${c.company[0]}</div>
+                    <div><div style="font-weight:500">${c.company}</div><div style="font-size:12px;color:var(--muted)">${c.address}</div></div>
+                  </div></td>
+                  <td><span class="badge gray">${c.type}</span></td>
+                  <td style="color:var(--muted);font-size:13px">${c.project}</td>
+                  <td style="min-width:120px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="progress-bar" style="flex:1"><div class="progress-fill amber" style="width:${c.progress}%"></div></div>
+                      <span style="font-size:12px;color:var(--muted)">${c.progress}%</span>
+                    </div>
+                  </td>
+                  <td style="font-size:12px;color:var(--muted);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notes}</td>
+                  <td><button class="btn btn-ghost btn-sm" onclick="viewCustomer(${c.id})">View</button></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  },
+
+  completed() {
+    const done = DB.customers.filter(c=>c.status==='Completed');
+    return `
+      <div class="page-header"><h1>Completed Projects</h1><p>Successfully delivered work</p></div>
+      <div class="stats-grid">
+        ${done.map(c => `
+          <div class="stat-card green" style="cursor:pointer" onclick="viewCustomer(${c.id})">
+            <div class="stat-label">${c.type}</div>
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:600;margin-bottom:6px">${c.company}</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:8px">${c.project}</div>
+            <span class="badge green">✓ Completed</span>
+          </div>`).join('')}
+      </div>`;
+  },
+};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function statusBadge(s) {
+  if (s === 'Completed') return '<span class="badge green">Completed</span>';
+  if (s === 'Ongoing') return '<span class="badge amber">Ongoing</span>';
+  return '<span class="badge gray">'+s+'</span>';
+}
+function roleBadge(r) {
+  if (r === 'Marketing') return '<span class="badge purple">Marketing</span>';
+  if (r === 'Developer') return '<span class="badge blue">Developer</span>';
+  return '<span class="badge gray">'+r+'</span>';
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  setTimeout(() => t.className = '', 2800);
+}
+
+// ─── CUSTOMER ACTIONS ─────────────────────────────────────────────────────────
+function viewCustomer(id) {
+  const c = DB.customers.find(x=>x.id===id);
+  viewingCustomerId = id;
+  document.getElementById('view-company-name').textContent = c.company;
+  const paidTotal = c.payments.filter(p=>p.paid).reduce((a,p)=>a+p.amount,0);
+  document.getElementById('view-customer-body').innerHTML = `
+    <div class="detail-row"><span class="detail-label">📞 Phone</span><span class="detail-value">${c.phone}</span></div>
+    <div class="detail-row"><span class="detail-label">📍 Address</span><span class="detail-value">${c.address}</span></div>
+    <div class="detail-row"><span class="detail-label">🏢 Type</span><span class="detail-value"><span class="badge gray">${c.type}</span></span></div>
+    <div class="detail-row"><span class="detail-label">🎯 Project</span><span class="detail-value">${c.project}</span></div>
+    <div class="detail-row"><span class="detail-label">💰 Budget</span><span class="detail-value">₹${c.budget.toLocaleString()} <span style="color:var(--muted);font-size:12px">(₹${paidTotal.toLocaleString()} received)</span></span></div>
+    <div class="detail-row"><span class="detail-label">⭐ Rating</span><span class="detail-value"><span class="stars">${'★'.repeat(c.rating)}${'☆'.repeat(5-c.rating)}</span></span></div>
+    <div class="detail-row"><span class="detail-label">🔗 Profile</span><span class="detail-value">${c.profile ? `<a href="${c.profile}" target="_blank" style="color:var(--accent2)">${c.profile}</a>` : '<span style="color:var(--muted)">—</span>'}</span></div>
+    <div class="detail-row"><span class="detail-label">📊 Status</span><span class="detail-value">${statusBadge(c.status)}</span></div>
+    <div class="detail-row"><span class="detail-label">📋 Notes</span><span class="detail-value" style="color:var(--muted)">${c.notes || '—'}</span></div>
+    <div class="detail-row"><span class="detail-label">📅 Demo</span><span class="detail-value">${c.demo ? '<span class="badge green">Done</span>' : '<span class="badge red">Pending</span>'}</span></div>`;
+  document.getElementById('demo-btn').textContent = c.demo ? '✅ Demo Done' : '📅 Request Demo';
+  openModal('modal-view-customer');
+}
+
+function requestDemo() {
+  const c = DB.customers.find(x=>x.id===viewingCustomerId);
+  c.demo = true;
+  closeModal('modal-view-customer');
+  showToast(`Demo requested for ${c.company}!`);
+  loadPage('customers');
+}
+
+function quickDemo(id) {
+  const c = DB.customers.find(x=>x.id===id);
+  c.demo = !c.demo;
+  showToast(c.demo ? `Demo marked for ${c.company}` : `Demo cleared for ${c.company}`);
+  loadPage('customers');
+}
+
+function openPayment(id) {
+  const c = DB.customers.find(x=>x.id===id);
+  viewingCustomerId = id;
+  const rows = c.payments.map(p => `
+    <div class="payment-row">
+      <div>
+        <div style="font-weight:500;font-size:14px">${p.label}</div>
+        <div style="font-size:12px;color:var(--muted)">₹${p.amount.toLocaleString()}</div>
+      </div>
+      ${p.paid ? '<span class="badge green">Received</span>' : '<span class="badge red">Pending</span>'}
+    </div>`).join('');
+  const total = c.payments.reduce((a,p)=>a+p.amount,0);
+  const paid = c.payments.filter(p=>p.paid).reduce((a,p)=>a+p.amount,0);
+  document.getElementById('payment-body').innerHTML = `
+    <div style="margin-bottom:16px">${rows}</div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;font-size:14px">
+      <span style="color:var(--muted)">Total</span><span style="font-weight:600">₹${total.toLocaleString()}</span>
+    </div>
+    <div style="background:rgba(34,197,94,0.08);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;font-size:14px;margin-top:8px">
+      <span style="color:var(--muted)">Collected</span><span style="font-weight:600;color:var(--green)">₹${paid.toLocaleString()}</span>
+    </div>
+    <div style="background:rgba(239,68,68,0.08);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;font-size:14px;margin-top:8px">
+      <span style="color:var(--muted)">Remaining</span><span style="font-weight:600;color:var(--red)">₹${(total-paid).toLocaleString()}</span>
+    </div>`;
+  openModal('modal-payment');
+}
+
+function markPaid() {
+  const c = DB.customers.find(x=>x.id===viewingCustomerId);
+  const p = c.payments.find(p=>!p.paid);
+  if (p) { p.paid = true; showToast(`₹${p.amount.toLocaleString()} marked as received!`); }
+  else showToast('All payments already received!', 'error');
+  closeModal('modal-payment');
+  loadPage('payments');
+}
+
+function saveCustomerInline() {
+  const company = document.getElementById('f-company')?.value.trim();
+  const phone = document.getElementById('f-phone')?.value.trim();
+  const address = document.getElementById('f-address')?.value.trim();
+  const type = document.getElementById('f-type')?.value;
+  const rating = parseInt(document.getElementById('f-rating')?.value || 5);
+  const profile = document.getElementById('f-profile')?.value.trim();
+  const project = document.getElementById('f-project')?.value;
+  const budget = parseInt(document.getElementById('f-budget')?.value || 0);
+  const notes = document.getElementById('f-notes')?.value.trim();
+
+  if (!company || !phone || !type || !project) { showToast('Please fill required fields.', 'error'); return; }
+
+  DB.customers.push({
+    id: DB.nextId++, company, phone, address, type, rating, profile,
+    project, budget, notes, status: 'Ongoing', progress: 0,
+    payments: [{ label: 'Advance', amount: Math.round(budget*0.4), paid: false }, { label: 'Final', amount: Math.round(budget*0.6), paid: false }],
+    demo: false
+  });
+  showToast(`${company} added successfully!`);
+  loadPage('customers');
+  document.querySelector('.nav-item[data-page="customers"]')?.classList.add('active');
+  document.querySelector('.nav-item[data-page="add-customer"]')?.classList.remove('active');
+}
+
+function saveCustomer() {
+  const company = document.getElementById('f-company')?.value.trim();
+  const phone = document.getElementById('f-phone')?.value.trim();
+  if (!company || !phone) { showToast('Fill required fields.', 'error'); return; }
+  saveCustomerInline();
+  closeModal('modal-add-customer');
+}
+
+function saveCred() {
+  const name = document.getElementById('c-name')?.value.trim();
+  const role = document.getElementById('c-role')?.value;
+  const username = document.getElementById('c-user')?.value.trim();
+  const password = document.getElementById('c-pass')?.value.trim();
+  if (!name || !username || !password) { showToast('Fill all fields.', 'error'); return; }
+  DB.credentials.push({ id: DB.nextCredId++, name, role, username, password });
+  closeModal('modal-add-cred');
+  showToast(`Credentials added for ${name}!`);
+  loadPage('credentials');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
 </script>
-
 </body>
 </html>
